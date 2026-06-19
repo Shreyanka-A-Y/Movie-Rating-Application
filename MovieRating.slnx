@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="MovieRating.Business/MovieRating.Business.csproj" />
+  <Project Path="MovieRating.Commons/MovieRating.Commons.csproj" />
+  <Project Path="MovieRating.DataAccess/MovieRating.DataAccess.csproj" />
+  <Project Path="MovieRating.Models/MovieRating.Models.csproj" />
+  <Project Path="MovieRating/MovieRating.API.csproj" />
+</Solution>
