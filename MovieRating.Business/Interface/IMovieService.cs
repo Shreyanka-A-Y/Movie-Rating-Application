@@ -9,12 +9,15 @@ namespace MovieRating.Business.Interface
     {
 
         IEnumerable<MovieDetailDTO> GetMovieDetail();
+        MovieDetailDTO GetMovieById(int id);
         void AddMovie(MovieDTO movieDTO);
         void UpdateMovie(int id, MovieDTO movieDto);
         void DeleteMovie(int id);
 
-        IEnumerable<MovieDetailDTO> SearchMovie(string searchWord);
-        IEnumerable<MovieDetailDTO> SortMovie(string searchWord, string? sortBy);
+        IEnumerable<MovieDetailDTO> SearchMovies(string searchWord);
+        IEnumerable<MovieDetailDTO> SortMovie(string? sortBy);
+
+        IEnumerable<MovieDetailDTO> FilterByRating(int rating);
 
     }
 }

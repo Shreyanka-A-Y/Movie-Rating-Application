@@ -1,5 +1,6 @@
 ﻿using MovieRating.DataAccess.Data;
 using MovieRating.DataAccess.Interfaces;
+using MovieRating.Commons.DTOs;
 using MovieRating.Models;
 using System;
 using System.Collections.Generic;
@@ -22,10 +23,19 @@ namespace MovieRating.DataAccess.Repositories
             return _context.Movies.ToList();
         }
 
+        public IEnumerable<Movie> SearchMovie(string searchWord)
+        {
+            return _context.Movies.Where(
+                m => m.Title.Contains(searchWord) || 
+                m.Genre.Contains(searchWord) || 
+                m.ReleaseYear.ToString().Contains(searchWord)                
+                ).ToList();
+        }
+
         public Movie GetById(int id)
         {
             var movie = _context.Movies.Find(id);
-
+            
             if (movie == null)
             {
                 throw new Exception("Movie Not Found");
@@ -63,7 +73,6 @@ namespace MovieRating.DataAccess.Repositories
             _context.Movies.Remove(movie);
             _context.SaveChanges();
         }
-
 
     }
 }

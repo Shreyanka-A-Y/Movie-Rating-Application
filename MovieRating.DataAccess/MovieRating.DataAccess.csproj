@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MovieRating.Commons\MovieRating.Commons.csproj" />
     <ProjectReference Include="..\MovieRating.Models\MovieRating.Models.csproj" />
   </ItemGroup>
 

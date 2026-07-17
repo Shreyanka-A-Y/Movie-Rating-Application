@@ -14,7 +14,7 @@ namespace MovieRating.Models
         [Required]  public int ReleaseYear { get; set; } 
         public string PosterUrl { get; set; } = string.Empty;
 
-        public virtual ICollection<Rating> Ratings { get; set; }
+        public virtual ICollection<Rating>? Ratings { get; set; }
 
     }
 }

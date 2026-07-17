@@ -80,5 +80,25 @@ namespace MovieRating.Business.Services
         {
             throw new NotImplementedException();
         }
+
+        public IEnumerable<MovieDetailDTO> SearchMovies(string searchWord)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<MovieDetailDTO> FilterByRating(int rating)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<MovieDetailDTO> SortMovie(string? sortBy)
+        {
+            throw new NotImplementedException();
+        }
+
+        public MovieDetailDTO GetMovieById(int id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

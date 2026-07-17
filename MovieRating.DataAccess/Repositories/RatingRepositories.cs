@@ -30,6 +30,7 @@ namespace MovieRating.DataAccess.Repositories
         public void Add(Rating rating)
         {
             _context.Ratings.Add(rating);
+            Console.WriteLine(rating.MovieId);
             _context.SaveChanges();
         }
     }

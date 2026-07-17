@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".gitignore" />
+  </Folder>
   <Project Path="MovieRating.Business/MovieRating.Business.csproj" />
   <Project Path="MovieRating.Commons/MovieRating.Commons.csproj" />
   <Project Path="MovieRating.DataAccess/MovieRating.DataAccess.csproj" />

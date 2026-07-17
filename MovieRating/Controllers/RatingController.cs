@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MovieRating.Business.Interface;
 using MovieRating.Commons.DTOs;
 using MovieRating.DataAccess.Interfaces;
 
 namespace MovieRating.API.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class RatingController : ControllerBase
@@ -21,5 +23,15 @@ namespace MovieRating.API.Controllers
             _ratingService.AddRating(ratingDTO);
             return CreatedAtAction(nameof(AddRatings), ratingDTO);
         }
+
+        [HttpGet("RatingDetail")]
+        public IActionResult RatingDetail(int movieID)
+        {
+            var rating = _ratingService.GetRatingById(movieID);
+            return Ok(rating);
+        }
+
+        
+
     }
 }

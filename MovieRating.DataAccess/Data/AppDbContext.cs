@@ -16,6 +16,7 @@ namespace MovieRating.DataAccess.Data
 
         public DbSet<Movie> Movies { get; set; }
         public DbSet<Rating> Ratings { get; set; }
+        public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -79,6 +80,16 @@ namespace MovieRating.DataAccess.Data
                     Id = 5,
                     MovieId = 3,
                     RatingStars = 5
+                }
+            );
+
+            modelBuilder.Entity<User>().HasData(
+                new User
+                {
+                    Id = 1,
+                    Username = "Admin",
+                    Password = "Admin",
+                    Role  =  "Admin"
                 }
             );
 

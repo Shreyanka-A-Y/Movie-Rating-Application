@@ -1,4 +1,5 @@
 ﻿using EllipticCurve.Utils;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using MovieRating.Business.Interface;
 using MovieRating.Commons.DTOs;
@@ -34,10 +35,28 @@ namespace MovieRating.Business.Services
                 Description = m.Description,
                 Genre = m.Genre,
                 ReleaseYear = m.ReleaseYear,
+                PosterUrl = m.PosterUrl,
                 AverageRating = GetAverageRating(m.Id),
                 TotalRating = GetTotalRating(m.Id)
             });
             
+        }
+
+        public MovieDetailDTO GetMovieById(int id)
+        {
+            var movie = _movieRepository.GetById(id);
+
+            return  new MovieDetailDTO
+            {
+                Id = movie.Id,
+                Title = movie.Title,
+                Description = movie.Description,
+                Genre = movie.Genre,
+                ReleaseYear = movie.ReleaseYear,
+                PosterUrl = movie.PosterUrl,
+                AverageRating = GetAverageRating(movie.Id),
+                TotalRating = GetTotalRating(movie.Id)
+            };
         }
 
         public void AddMovie(MovieDTO movieDTO)
@@ -71,16 +90,22 @@ namespace MovieRating.Business.Services
 
         public void DeleteMovie(int id)
         {
+           var movie =  _movieRepository.GetById(id);
+
+            if(movie == null)
+            {
+                throw new Exception("Movie Not Found.");
+            }
+
             _movieRepository.Delete(id);
         }
 
 
 
 
-        public IEnumerable<MovieDetailDTO> SearchMovie(string searchWord)
+        public IEnumerable<MovieDetailDTO> SearchMovies(string searchWord)
         {
-            var movies = _movieRepository.GetAll();
-            movies = movies.Where(m => m.Title.Contains(searchWord, StringComparison.OrdinalIgnoreCase) || m.Genre.Contains(searchWord, StringComparison.OrdinalIgnoreCase) || m.ReleaseYear.ToString().Contains(searchWord)).ToList();
+            var movies = _movieRepository.SearchMovie(searchWord);
 
             return movies.Select(m => new MovieDetailDTO
             {
@@ -96,56 +121,86 @@ namespace MovieRating.Business.Services
         }
 
 
-        public IEnumerable<MovieDetailDTO> SortMovie(string searchWord, string? sortBy)
+        public IEnumerable<MovieDetailDTO> SortMovie(string? sortBy)
         {
-            var movies = SearchMovie(searchWord);
+            var movies = _movieRepository.GetAll();
 
-            //if(sortBy == null)
-            //{
-            //    movies = movies.OrderBy(m => m.Id);
-            //}
+             switch (sortBy)
+             {
+                case "Asc":
+                    movies = movies.OrderBy(m => m.ReleaseYear);
+                    break;
+                case "Desc":
+                    movies = movies.OrderByDescending(m => m.ReleaseYear);
+                    break;
+                default:
+                    movies = movies.OrderByDescending(m => m.Id);
+                    break;
+             }
 
-            if(int.TryParse(searchWord, out int year))
+            return movies.Select(m => new MovieDetailDTO
             {
-
-                switch (sortBy)
-                {
-                    case "Asc":
-                        movies = movies.OrderBy(m=> m.ReleaseYear);
-                        break;
-                    case "Desc":
-                        movies = movies.OrderByDescending(m => m.ReleaseYear);
-                        break;
-                    default:
-                        movies = movies.OrderBy(m => m.Id);
-                        break;
-
-                }
-            }
-            else if (_movieRepository.GetAll().Where(m => m.Title.Contains(searchWord)) != null)
-            {
-                switch (sortBy)
-                {
-                    case "Asc":
-                        movies = movies.OrderBy(m => m.Title);
-                        break;
-                    case "Desc":
-                        movies = movies.OrderByDescending(m => m.Title);
-                        break;
-                    default:
-                        movies = movies.OrderBy(m => m.Id);
-                        break;
-
-                }
-            }
-            else
-            {
-                movies = movies.OrderBy(m => m.Id);
-            }
-
-
-            return movies.ToList();
+                Id = m.Id,
+                Title = m.Title,
+                Description = m.Description,
+                Genre = m.Genre,
+                ReleaseYear = m.ReleaseYear,
+                PosterUrl = m.PosterUrl,
+                AverageRating = GetAverageRating(m.Id),
+                TotalRating = GetTotalRating(m.Id)
+            });
         }
+
+        //public IEnumerable<MovieDetailDTO> SortMovie(string searchWord, string? sortBy)
+        //{
+        //    var movies = SearchMovies(searchWord);
+
+        //    //if(sortBy == null)
+        //    //{
+        //    //    movies = movies.OrderBy(m => m.Id);
+        //    //}
+
+        //    if(int.TryParse(searchWord, out int year))
+        //    {
+
+        //        switch (sortBy)
+        //        {
+        //            case "Asc":
+        //                movies = movies.OrderBy(m=> m.ReleaseYear);
+        //                break;
+        //            case "Desc":
+        //                movies = movies.OrderByDescending(m => m.ReleaseYear);
+        //                break;
+        //            default:
+        //                movies = movies.OrderBy(m => m.Id);
+        //                break;
+
+        //        }
+        //    }
+        //    else if (_movieRepository.GetAll().Where(m => m.Title.Contains(searchWord)) != null)
+        //    {
+        //        switch (sortBy)
+        //        {
+        //            case "Asc":
+        //                movies = movies.OrderBy(m => m.Title);
+        //                break;
+        //            case "Desc":
+        //                movies = movies.OrderByDescending(m => m.Title);
+        //                break;
+        //            default:
+        //                movies = movies.OrderBy(m => m.Id);
+        //                break;
+
+        //        }
+        //    }
+        //    else
+        //    {
+        //        movies = movies.OrderBy(m => m.Id);
+        //    }
+
+
+        //    return movies.ToList();
+        //}
 
 
 
@@ -153,7 +208,7 @@ namespace MovieRating.Business.Services
         {
             var movieRating = _ratingService.GetRatingById(id).ToList();
 
-            if (movieRating.IsNullOrEmpty())
+            if(movieRating == null || !movieRating.Any())
             {
                 return 0;
             }
@@ -167,6 +222,21 @@ namespace MovieRating.Business.Services
             return movieRating.Count();
         }
 
-        
+        public IEnumerable<MovieDetailDTO> FilterByRating(int rating)
+        {
+            var movies = _movieRepository.GetAll();
+
+            return movies.Select(m => new MovieDetailDTO
+            {
+                Id = m.Id,
+                Title = m.Title,
+                Description = m.Description,
+                Genre = m.Genre,
+                ReleaseYear = m.ReleaseYear,
+                PosterUrl = m.PosterUrl,
+                AverageRating = GetAverageRating(m.Id),
+                TotalRating = GetTotalRating(m.Id)
+            }).Where(m => m.AverageRating >= rating).ToList();
+        }
     }
 }

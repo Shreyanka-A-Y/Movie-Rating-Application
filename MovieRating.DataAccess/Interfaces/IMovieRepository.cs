@@ -1,13 +1,13 @@
 ﻿using MovieRating.Models;
-using System;
+using MovieRating.Commons.DTOs;
 using System.Collections.Generic;
-using System.Text;
 
 namespace MovieRating.DataAccess.Interfaces
 {
     public interface IMovieRepository
     {
         IEnumerable<Movie> GetAll();
+        IEnumerable<Movie> SearchMovie(string searchWord);
         Movie GetById(int id);
         void Add(Movie movie);
         void Update(Movie movie);
