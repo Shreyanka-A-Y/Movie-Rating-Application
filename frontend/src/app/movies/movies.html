@@ -1,0 +1,56 @@
+<div class="sub-nav">
+  <ul>
+    <li>
+      <button (click)="toggle()">
+        {{sortDisplay ? "Desc" : "Asc"}}
+      </button>
+    </li>
+    <li>
+      <select (change)="filterRating($event)">
+        <option value="">All Ratings</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5<option>
+      </select>
+    </li>
+    <li>
+      <input placeholder="Search Movie" (input) = "searchMovie($event)">
+    </li>
+  </ul>
+</div>
+
+<div class="movies-container">
+  @for (item of moviesList(); track item.id) {
+    <div class="movie-card">
+      <img
+        (click)="ratingDetailPage(item.id)"
+        [src]="item.posterUrl"
+        [alt]="item.title"
+        class="movie-poster"
+      />
+
+      <div class="movie-content">
+        <h2>{{ item.title }}</h2>
+
+        <p><strong>Genre:</strong> {{ item.genre }}</p>
+        <p><strong>Year:</strong> {{ item.releaseYear }}</p>
+        <p><strong>Rating:</strong> ⭐ {{ Math.trunc(item.averageRating*10)/10 }}</p>
+        <p class="description">{{ item.description }}</p>
+
+        <div class="rating">
+            <button (click) ="RateMovie(item.id, 1) " [class.active]="item.averageRating >= 1">★</button>
+            <button (click) ="RateMovie(item.id, 2) " [class.active]="item.averageRating >= 2">★</button>
+            <button (click) ="RateMovie(item.id, 3) " [class.active]="item.averageRating >= 3">★</button>
+            <button (click) ="RateMovie(item.id, 4) " [class.active]="item.averageRating >= 4">★</button>
+            <button (click) ="RateMovie(item.id, 5) " [class.active]="item.averageRating >= 5">★</button>
+        </div>
+
+        <div class="delete-btn">
+            <button (click) = "deleteMovie(item.id)" >Delete</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

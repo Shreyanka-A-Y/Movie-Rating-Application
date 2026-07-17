@@ -1,0 +1,30 @@
+<div class="movie-card">
+  <input
+    type="text"
+    [(ngModel)]="movie.title"
+    placeholder="Movie Title">
+
+  <input
+    type="text"
+    [(ngModel)]="movie.genre"
+    placeholder="Genre">
+
+  <textarea
+    [(ngModel)]="movie.description"
+    placeholder="Movie Description">
+  </textarea>
+
+  <input
+    type="number"
+    [(ngModel)]="movie.releaseYear"
+    placeholder="Release Year">
+
+  <input
+    type="text"
+    [(ngModel)]="movie.posterUrl"
+    placeholder="Poster URL">
+
+  <button (click)="addMovie()">
+    Add Movie
+  </button>
+</div>
