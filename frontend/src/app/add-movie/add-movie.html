@@ -1,28 +1,17 @@
 <div class="movie-card">
-  <input
-    type="text"
-    [(ngModel)]="movie.title"
-    placeholder="Movie Title">
+  <form [formGroup]="movieForm">
 
-  <input
-    type="text"
-    [(ngModel)]="movie.genre"
-    placeholder="Genre">
+    <input type="text" formControlName="title" placeholder="Movie Title">
 
-  <textarea
-    [(ngModel)]="movie.description"
-    placeholder="Movie Description">
-  </textarea>
+    <input type="text" formControlName="genre" placeholder="Genre">
 
-  <input
-    type="number"
-    [(ngModel)]="movie.releaseYear"
-    placeholder="Release Year">
+    <textarea formControlName="description" placeholder="Movie Description"></textarea>
 
-  <input
-    type="text"
-    [(ngModel)]="movie.posterUrl"
-    placeholder="Poster URL">
+    <input type="number" formControlName="releaseYear" placeholder="Release Year">
+
+    <input type="text" formControlName="posterUrl" placeholder="Poster URL">
+
+  </form>
 
   <button (click)="addMovie()">
     Add Movie

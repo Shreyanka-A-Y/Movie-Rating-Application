@@ -1,25 +1,30 @@
 /* Page */
 body {
-    background: #f5f5f5;
+    margin: 0;
     font-family: Arial, Helvetica, sans-serif;
+    background: #f4f6f9;
 }
 
-/* Form Card */
+/* Movie Form Card */
 .movie-card {
     width: 450px;
     max-width: 90%;
     margin: 50px auto;
     padding: 25px;
-    background: #ffffff;
+    background: #fff;
     border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
 
+/* Form Layout */
+.movie-card form {
     display: flex;
     flex-direction: column;
     gap: 15px;
 }
 
-/* Inputs */
+/* Inputs & Textarea */
 .movie-card input,
 .movie-card textarea {
     width: 100%;
@@ -28,9 +33,10 @@ body {
     border: 1px solid #ccc;
     border-radius: 6px;
     outline: none;
-    transition: border-color 0.3s;
+    transition: border-color 0.3s ease;
 }
 
+/* Focus Effect */
 .movie-card input:focus,
 .movie-card textarea:focus {
     border-color: #0e213b;
@@ -44,9 +50,11 @@ body {
 
 /* Button */
 .movie-card button {
+    width: 100%;
+    margin-top: 20px;
     padding: 12px;
-    background-color: #0e213b;
-    color: white;
+    background-color: #031429;
+    color: #fff;
     font-size: 16px;
     border: none;
     border-radius: 6px;
@@ -55,7 +63,7 @@ body {
 }
 
 .movie-card button:hover {
-    background-color: #1b3a61;
+    background-color: #0a223f;
 }
 
 /* Responsive */
