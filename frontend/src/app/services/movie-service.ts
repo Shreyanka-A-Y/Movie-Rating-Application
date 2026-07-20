@@ -47,8 +47,7 @@ export class MovieService {
         )
     }
 
-    addMovie(movie : IAddMovie){ 
-        console.log(movie)       
+    addMovie(movie : IAddMovie){       
         return this.http.post(
             `${this.apiUrl}/Movie/Create`,
                 movie,

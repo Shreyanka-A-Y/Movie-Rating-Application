@@ -1,6 +1,8 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { MovieService } from '../services/movie-service';
 import { Router } from '@angular/router';
+import { debounceTime, Subject } from 'rxjs';
+import { IMovie } from '../models/IMovies';
 
 @Component({
   selector: 'app-movies',
@@ -14,19 +16,35 @@ export class MoviesComponent implements OnInit {
   Math = Math;
 
   router = inject(Router)
+  movieService = inject(MovieService)
 
-  moviesList : any;
-  constructor(private movieServie : MovieService){
-    this.moviesList = this.movieServie.moviesList
-  }
+  private searchSubject = new Subject<string>();
+  // filteredMovieList = signal<IMovie[]>([]);
 
-   ngOnInit(): void {
+  moviesList = this.movieService.moviesList
+
+  searchText = signal('');
+  selectedRating = signal(0);
+  sortOrder = signal<'Asc' | 'Desc'>('Asc')
+
+
+  ngOnInit(): void {
      this.GetMovie();
+
+      this.searchSubject.pipe(debounceTime(500)).subscribe(value => {
+        if(!value){
+          this.movieService.moviesList()
+          return
+        }
+        this.movieService.moviesList().filter((movie:IMovie) =>{
+              return movie.title.toLowerCase().includes(value.toLocaleLowerCase())
+       })
+      })
    }
 
 
   GetMovie(){
-    this.movieServie.movies().subscribe({
+    this.movieService.movies().subscribe({
       next : (res) =>{
         this.moviesList.set(res);
       },
@@ -37,7 +55,7 @@ export class MoviesComponent implements OnInit {
   }
 
   RateMovie(movieId:number, ratingStars:number){
-    this.movieServie.rateMovie(movieId, ratingStars).subscribe({
+    this.movieService.rateMovie(movieId, ratingStars).subscribe({
       next:()=>{
         this.GetMovie();
       },
@@ -48,10 +66,11 @@ export class MoviesComponent implements OnInit {
   }
 
   deleteMovie(movieId:number){
-    this.movieServie.deleteMovie(movieId).subscribe({
-      next:(res)=>{
-        console.log("Delete successful", res);
-        this.GetMovie();
+    this.movieService.deleteMovie(movieId).subscribe({
+      next:()=>{
+        this.movieService.moviesList.update((movies : IMovie[]) => {
+          return movies.filter((movie : IMovie) => movie.id !== movieId)
+        })
       },
       error: (err) => {
         console.log(err);
@@ -59,26 +78,41 @@ export class MoviesComponent implements OnInit {
     })
   }
 
-  searchMovie(event : Event){
-    const searchWord = (event.target as HTMLInputElement).value
+  filteredMovieList = computed(() => {
 
-    this.movieServie.searchMovie(searchWord).subscribe({
-      next:(res)=>{
-        this.movieServie.moviesList.set(res)
-      },
-      error: (err) => {
-        console.log(err)
-      }
-    })
+    let movies = [...this.moviesList()]
+
+    const searchWord = this.searchText().trim().toLowerCase();
+    const rating = this.selectedRating()
+    const sortBy = this.sortOrder()
+
+    if(searchWord){
+      movies = movies.filter(movie => {
+        return movie.title.toLowerCase().includes(searchWord)
+      })
+    }
+
+    if(rating >= 0){
+      movies = movies.filter(movie => movie.averageRating >= rating)
+    }
+
+    if(sortBy){
+      movies.sort((a,b) => {
+        return sortBy === 'Asc' ? a.releaseYear - b.releaseYear : b.releaseYear - a.releaseYear
+      })
+    }
+
+    return movies
+  })
+
+  searchFilter(event : Event){
+    const searchWord = (event.target as HTMLInputElement).value
+    this.searchText.set(searchWord)
   }
 
   filterRating(event : Event){
     const rating = Number((event.target as HTMLSelectElement).value);
-    this.movieServie.filterByRating(rating).subscribe({
-      next:(res) => {
-        this.movieServie.moviesList.set(res)
-      }
-    })
+    this.selectedRating.set(rating)
   }
 
   sortDisplay: boolean = true;
@@ -87,12 +121,8 @@ export class MoviesComponent implements OnInit {
     this.sortByYear (this.sortDisplay ? 'Asc' : 'Desc')
   }
 
-  sortByYear(sortBy : string){
-    this.movieServie.SortByYear(sortBy).subscribe({
-      next:(res) => {
-        this.movieServie.moviesList.set(res)
-      }
-    })
+  sortByYear(sortBy : 'Asc'|'Desc'){
+    this.sortOrder.set(sortBy)    
   }
 
   ratingDetailPage(movieId : number){

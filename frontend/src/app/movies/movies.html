@@ -15,14 +15,17 @@
         <option value="5">5<option>
       </select>
     </li>
-    <li>
+    <!-- <li>
       <input placeholder="Search Movie" (input) = "searchMovie($event)">
+    </li> -->
+    <li>
+      <input placeholder="Search Movie" (input) = "searchFilter($event)">
     </li>
   </ul>
 </div>
 
 <div class="movies-container">
-  @for (item of moviesList(); track item.id) {
+  @for (item of filteredMovieList(); track item.id) {
     <div class="movie-card">
       <img
         (click)="ratingDetailPage(item.id)"
