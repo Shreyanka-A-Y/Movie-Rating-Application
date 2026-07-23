@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { IAddMovie } from '../models/IAddMovie';
 import { MovieService } from '../services/movie-service';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 @Component({
@@ -19,7 +19,7 @@ export class AddMovieComponent {
   router = inject(Router)
 
   movieForm = new FormGroup({
-    title: new FormControl(''),
+    title: new FormControl('',[Validators.required]),
     genre: new FormControl(''),
     description: new FormControl(''),
     releaseYear: new FormControl<Number>(new Date().getFullYear()),
@@ -28,7 +28,7 @@ export class AddMovieComponent {
 
   addMovie(){
     const movie = this.movieForm.value as IAddMovie
-    
+
     this.movieService.addMovie(movie).subscribe({
       next : () =>{
         this.router.navigate(['/movies']).then(() => {

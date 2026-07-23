@@ -6,8 +6,8 @@
       </button>
     </li>
     <li>
-      <select (change)="filterRating($event)">
-        <option value="">All Ratings</option>
+      <select [value]="selectedRating()" (change)="filterRating($event)">
+        <option value="0">All</option>
         <option value="1">1</option>
         <option value="2">2</option>
         <option value="3">3</option>
@@ -19,7 +19,7 @@
       <input placeholder="Search Movie" (input) = "searchMovie($event)">
     </li> -->
     <li>
-      <input placeholder="Search Movie" (input) = "searchFilter($event)">
+      <input placeholder="Search Movie" [value]="searchText()" (input) = "searchFilter($event)">
     </li>
   </ul>
 </div>

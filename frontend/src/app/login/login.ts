@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { AuthService } from '../services/auth-service';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-login',
@@ -19,20 +20,21 @@ export class LoginComponent {
   currentUser : any;
 
   private router = inject(Router)
+  private toastr = inject(ToastrService)
   constructor(private authService : AuthService){}
 
   login(){
     this.authService.login(this.Credential.username, this.Credential.password).subscribe({
       next: (respose : any) => {
 
-        console.log(respose.message)
+        console.log(respose.message)       
 
         this.authService.getCurrentUser().subscribe({
           next:(user) =>{
             this.currentUser = user;
-            this.authService.isLoginSuccessful.next(true);
+            this.authService.setLoginState(true);
             this.router.navigate(['/movies'])
-
+            this.toastr.success(respose.message, 'Success')
           }
         })
 

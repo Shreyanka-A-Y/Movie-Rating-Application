@@ -1,8 +1,8 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { MovieService } from '../services/movie-service';
 import { Router } from '@angular/router';
-import { debounceTime, Subject } from 'rxjs';
 import { IMovie } from '../models/IMovies';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-movies',
@@ -17,29 +17,27 @@ export class MoviesComponent implements OnInit {
 
   router = inject(Router)
   movieService = inject(MovieService)
+  toastr = inject(ToastrService)
 
-  private searchSubject = new Subject<string>();
+  // private searchSubject = new Subject<string>();
   // filteredMovieList = signal<IMovie[]>([]);
 
   moviesList = this.movieService.moviesList
 
-  searchText = signal('');
-  selectedRating = signal(0);
+  searchText = signal(localStorage.getItem('searchWord')??'');
+  selectedRating = signal(parseInt(localStorage.getItem('rating') ?? '0'));
   sortOrder = signal<'Asc' | 'Desc'>('Asc')
 
 
   ngOnInit(): void {
-     this.GetMovie();
+      this.GetMovie();
 
-      this.searchSubject.pipe(debounceTime(500)).subscribe(value => {
-        if(!value){
-          this.movieService.moviesList()
-          return
-        }
-        this.movieService.moviesList().filter((movie:IMovie) =>{
-              return movie.title.toLowerCase().includes(value.toLocaleLowerCase())
-       })
-      })
+      // this.searchSubject.pipe(debounceTime(5000)).subscribe(value => {
+      //   if(!value){
+      //     this.movieService.moviesList()
+      //     return
+      //   }
+      // })
    }
 
 
@@ -73,6 +71,7 @@ export class MoviesComponent implements OnInit {
         })
       },
       error: (err) => {
+        this.toastr.warning("Failed to delete", 'Unauthorized')
         console.log(err);
       }
     })
@@ -102,17 +101,23 @@ export class MoviesComponent implements OnInit {
       })
     }
 
+    if(searchWord === ''){
+      return movies
+    }
+
     return movies
   })
 
   searchFilter(event : Event){
     const searchWord = (event.target as HTMLInputElement).value
     this.searchText.set(searchWord)
+    localStorage.setItem('searchWord', searchWord)
   }
 
   filterRating(event : Event){
     const rating = Number((event.target as HTMLSelectElement).value);
     this.selectedRating.set(rating)
+    localStorage.setItem('rating', rating.toString())
   }
 
   sortDisplay: boolean = true;

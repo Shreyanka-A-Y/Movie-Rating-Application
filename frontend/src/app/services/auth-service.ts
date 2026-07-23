@@ -11,7 +11,12 @@ export class AuthService {
 
     private apiUrl = 'https://localhost:7028/api/auth';
 
-    isLoginSuccessful = new BehaviorSubject<boolean>(false);
+    private isLoginSuccessful = new BehaviorSubject<boolean>(false);
+    isLoginSuccessful$ = this.isLoginSuccessful.asObservable();
+
+    setLoginState(value: boolean){
+        this.isLoginSuccessful.next(value)
+    }
 
     login(username: string, password: string) 
     {
@@ -27,6 +32,15 @@ export class AuthService {
         );
     }
 
+    logout(){
+        return this.http.post(
+            `${this.apiUrl}/logout`,{},
+            {
+                withCredentials : true
+            }
+        );
+    }
+
     getCurrentUser(){
         return this.http.get(
             `${this.apiUrl}/currentUser`,{
@@ -34,5 +48,7 @@ export class AuthService {
             }
         )
     }
+
+
 
 }

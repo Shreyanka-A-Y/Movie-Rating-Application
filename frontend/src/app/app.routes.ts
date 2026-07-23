@@ -4,15 +4,13 @@ import { HomeComponent } from './home/home';
 import { MoviesComponent } from './movies/movies';
 import { AddMovieComponent } from './add-movie/add-movie';
 import { RatingPageComponent } from './rating-page/rating-page';
+import { authGuard } from './Guards/auth.guard';
 
 export const routes: Routes = [
     {
         path: "",
-        component: LoginComponent
-    },
-    {
-        path:"home",
-        component: HomeComponent
+        component: MoviesComponent,
+        canActivate: [authGuard],
     },
     {
         path: "login",
@@ -24,14 +22,18 @@ export const routes: Routes = [
     },
     {
         path: "movies",
-        component: MoviesComponent
+        component: MoviesComponent,
+        canActivate: [authGuard],
     },
     {
         path: "add",
-        component: AddMovieComponent
+        component: AddMovieComponent,
+        canActivate: [authGuard],
+
     },
     {
         path: "rating-page/:movieId",
-        component: RatingPageComponent
+        component: RatingPageComponent,
+        canActivate: [authGuard],
     }
 ];

@@ -61,7 +61,7 @@ export class MovieService {
         return this.http.get<IMovie[]>(
             `${this.apiUrl}/Movie/Search`,
             {
-                 params: { searchWord },
+                params: { searchWord },
                 withCredentials: true
             }
         )
